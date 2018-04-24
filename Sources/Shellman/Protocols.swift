@@ -7,19 +7,6 @@
 
 import Foundation
 
-// MARK: - ShellLaunchable.
-
-/// A protocol represents the conforming types can launch a shell of `ShellType`(normally as `Process`)
-/// and do any necessary configuration at the point after the conforming type's execution.
-public protocol ProcessLaunchable {
-    /// Launch the given shell of `ShellType`, and execute the configuration closure at the end of the execution
-    /// of the function.
-    ///
-    /// - Parameter shell: A shell as the given type `ShellType`.
-    /// - Parameter config: A closure to do extra configuration of the shell.
-    func launch(_ process: Process, config: (Process) -> Void) -> Self
-}
-
 // MARK: - ShellOptionsProvider.
 
 /// A protocol represents the conforming types can provide the options for shell to execute such as stdout, stdin
@@ -47,20 +34,22 @@ public protocol ShellOptionsProvider {
 }
 
 // MARK: - Default Implementation.
+// MARK: Standards.
 
 extension ShellOptionsProvider {
-    public var stdout: StdOut? {
-        return nil
-    }
-    public var stderr: StdErr? {
-        return nil
-    }
-    public var stdin: StdIn? {
-        return nil
-    }
+    /// Returns the standard output target. Defaults to be nil.
+    public var stdout: StdOut? { return nil }
+    /// Returns the standard error target. Defaults to be nil.
+    public var stderr: StdErr? { return nil }
+    /// Returns the standard input target. Defaults to be nil/
+    public var stdin: StdIn? { return nil }
 }
 
+// MARK: CurrentDirectoryPath.
+
 extension ShellOptionsProvider {
+    /// Returns the current directory path to execute the shell process.
+    /// Defaults using `FileManager.default.currentDirectoryPath`.
     public var currentDirectoryPath: String {
         return FileManager.default.currentDirectoryPath
     }
@@ -82,12 +71,4 @@ extension ShellResultProtocol where StdErr == Pipe {
     public var error: Data? {
         return stderr?.fileHandleForReading.readDataToEndOfFile()
     }
-}
-
-// MARK: - ShellProtocol.
-
-public protocol ShellProtocol: ExpressibleByStringLiteral {
-    associatedtype Result: ShellOptionsProvider
-    
-    func execute(at path: String?) -> Result
 }

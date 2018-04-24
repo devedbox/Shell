@@ -32,14 +32,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		DC87C7B2208F7A6600A3F0B2 /* PBXContainerItemProxy */ = {
+		DC87C7B6208F85D200A3F0B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = OBJ_1 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = "Shellman::Shellman";
 			remoteInfo = Shellman;
 		};
-		DC87C7B3208F7A6600A3F0B2 /* PBXContainerItemProxy */ = {
+		DC87C7B7208F85D200A3F0B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = OBJ_1 /* Project object */;
 			proxyType = 1;
@@ -100,8 +100,8 @@
 		OBJ_17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				"Shellman::ShellmanTests::Product" /* ShellmanTests.xctest */,
 				"Shellman::Shellman::Product" /* Shellman.framework */,
+				"Shellman::ShellmanTests::Product" /* ShellmanTests.xctest */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -250,12 +250,12 @@
 		OBJ_40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = "Shellman::ShellmanTests" /* ShellmanTests */;
-			targetProxy = DC87C7B3208F7A6600A3F0B2 /* PBXContainerItemProxy */;
+			targetProxy = DC87C7B7208F85D200A3F0B2 /* PBXContainerItemProxy */;
 		};
 		OBJ_50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = "Shellman::Shellman" /* Shellman */;
-			targetProxy = DC87C7B2208F7A6600A3F0B2 /* PBXContainerItemProxy */;
+			targetProxy = DC87C7B6208F85D200A3F0B2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -7,32 +7,27 @@
 
 import Foundation
 
+// MARK: - OutputResult.
+
 public struct OutputResult: ShellResultProtocol {
+    /// Standard output target type.
     public typealias StdOut = Pipe
+    /// Standard error target type.
     public typealias StdErr = Pipe
-    public typealias StdIn = ()
-    
-    public var stdout: StdOut? {
-        return StdOut()
-    }
-    public var stderr: StdErr? {
-        return StdErr()
-    }
-    public var stdin: StdIn?
+    /// Returns the standard output target.
+    public var stdout: StdOut? { return StdOut() }
+    /// Returns the standard error target.
+    public var stderr: StdErr? { return StdErr() }
+    /// The exit code of the `Result`.
     public var exitCode: Int32 = 0
     
     public init() { }
 }
 
+// MARK: - Result.
+
 public struct Result: ShellResultProtocol {
-    public typealias StdOut = ()
-    public typealias StdErr = ()
-    public typealias StdIn = ()
-    
-    public var stdout: StdOut?
-    public var stderr: StdErr?
-    public var stdin: StdIn?
-    
+    /// The exit code of the `Result`.
     public var exitCode: Int32 = 0
     
     public init() { }
