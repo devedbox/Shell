@@ -1,6 +1,6 @@
 //
 //  ShellProtocol.swift
-//  Shell
+//  Shellman
 //
 //  Created by devedbox on 2018/4/23.
 //
@@ -22,8 +22,8 @@ public protocol ProcessLaunchable {
 
 // MARK: - ShellOptionsProvider.
 
-/// A protocol represents the conforming types can provide the options for shell to execute such as stdout, stdin,
-/// stderr and currentDirectoryPath of the shell process.
+/// A protocol represents the conforming types can provide the options for shell to execute such as stdout, stdin
+/// , stderr and currentDirectoryPath of the shell process.
 public protocol ShellOptionsProvider {
     /// Standard output target type.
     associatedtype StdOut = Pipe
@@ -89,5 +89,5 @@ extension ShellResultProtocol where StdErr == Pipe {
 public protocol ShellProtocol: ExpressibleByStringLiteral {
     associatedtype Result: ShellOptionsProvider
     
-    func execute() -> Result
+    func execute(at path: String?) -> Result
 }

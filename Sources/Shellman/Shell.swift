@@ -1,5 +1,5 @@
 // Shell.swift
-// Shell
+// Shellman
 //
 // Created by devedbox.
 //
@@ -10,18 +10,13 @@ import Foundation
 
 /// A type represents the command line process on shell. Using this type instead of process directly to
 /// execute commands with specific `ShellResultProtocol`.
-public struct Shell<R: ShellResultProtocol>: ShellProtocol {
+public struct Shell<Result: ShellResultProtocol>: ShellProtocol {
     public typealias StringLiteralType = String
-    public typealias Result = R
     
     private let _process = Process()
     
-    public var command: String? {
-        guard let cmd = _process.launchPath?.split(separator: "/").last else {
-            return nil
-        }
-        
-        return String(cmd)
+    public init(_ commands: String) {
+        self.init(stringLiteral: commands)
     }
     
     public init(stringLiteral command: String) {
@@ -35,19 +30,21 @@ public struct Shell<R: ShellResultProtocol>: ShellProtocol {
     }
     
     @discardableResult
-    public func execute() -> Result {
-        return {
-            var result = Result()
-            _process.standardOutput = result.stdout
-            _process.standardError = result.stderr
-            _process.standardInput = result.stdin
-            _process.currentDirectoryPath = result.currentDirectoryPath
-            
-            _process.launch()
-            _process.waitUntilExit()
-            
-            result.exitCode = _process.terminationStatus
-            return result
-        }()
+    public func execute(at path: String? = nil) -> Result {
+        var result = Result()
+        
+        _process.currentDirectoryPath = path ?? result.currentDirectoryPath
+        result.stdout != nil ? _process.standardOutput = result.stdout : ()
+        result.stderr != nil ? _process.standardError = result.stderr : ()
+        result.stdin != nil ? _process.standardInput = result.stdin : ()
+        
+        _process.launch()
+        _process.waitUntilExit()
+        
+        result.exitCode = _process.terminationStatus
+        return result
     }
 }
+
+public typealias ShellOut = Shell<Result>
+public typealias ShellIn = Shell<OutputResult>
