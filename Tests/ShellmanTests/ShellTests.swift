@@ -1,5 +1,5 @@
 import XCTest
-@testable import Shell
+@testable import Shellman
 
 final class ShellTests: XCTestCase {
     func testExample() {
@@ -7,6 +7,16 @@ final class ShellTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
         print(("ls -al" as Shell<OutputResult>).execute().output as Any)
+        
+        shells(
+            """
+                git clone https://github.com/apple/swift
+                cd ./swift
+                swift build -c release
+                cd ../
+                rm -rf ./swift
+            """,
+            as: ShellOut.self).forEach { $0.execute() }
     }
 
     static var allTests = [
