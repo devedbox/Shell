@@ -57,17 +57,24 @@ extension ShellOptionsProvider {
 
 // MARK: - ShellResultProtocol.
 
+/// A protocol represents the executing result of `Shell`. Any instance of `Shell` must specify a
+/// result type conforming to `ShellResultProtocol`.
 public protocol ShellResultProtocol: ShellOptionsProvider {
+    /// The exit code of the shell process.
     var exitCode: Int32 { get set }
 }
 
+// MARK: - Default Implementation.
+
 extension ShellResultProtocol where StdOut == Pipe {
+    /// Read output data from the stdout.
     public var output: Data? {
         return stdout?.fileHandleForReading.readDataToEndOfFile()
     }
 }
 
 extension ShellResultProtocol where StdErr == Pipe {
+    /// Read error data from the stderr.
     public var error: Data? {
         return stderr?.fileHandleForReading.readDataToEndOfFile()
     }
