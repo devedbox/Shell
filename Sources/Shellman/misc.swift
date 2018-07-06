@@ -42,3 +42,8 @@ internal func _executable(_ name: String) -> String? {
             FileManager.default.isExecutableFile(atPath: $0)
         })
 }
+
+/// Creates a out stream shell with the given commands.
+public func shellsOut(_ commands: String) {
+    ShellOut.shells(commands).forEach { $0.execute() }
+}

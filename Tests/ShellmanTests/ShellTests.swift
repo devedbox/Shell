@@ -6,17 +6,15 @@ final class ShellTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        print(("ls -al" as Shell<OutputResult>).execute().output as Any)
+        print(("ls -al" as ShellIn).execute().output as Any)
         
-        shells(
-            """
-                git clone https://github.com/apple/swift
-                cd ./swift
-                swift build -c release
-                cd ../
-                rm -rf ./swift
-            """,
-            as: ShellOut.self).forEach { $0.execute() }
+        Shellman.shellsOut("""
+        git clone https://github.com/apple/swift
+        cd ./swift
+        swift build -c release
+        cd ../
+        rm -rf ./swift
+        """)
     }
 
     static var allTests = [

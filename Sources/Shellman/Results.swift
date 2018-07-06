@@ -9,17 +9,19 @@ import Foundation
 
 // MARK: - OutputResult.
 
-public struct OutputResult: ShellResultProtocol {
+public final class OutputResult: ShellResultProtocol {
     /// Standard output target type.
     public typealias StdOut = Pipe
     /// Standard error target type.
     public typealias StdErr = Pipe
     /// Returns the standard output target.
-    public var stdout: StdOut? { return StdOut() }
+    public var stdout: StdOut = StdOut()
     /// Returns the standard error target.
-    public var stderr: StdErr? { return StdErr() }
+    public var stderr: StdErr = StdOut()
     /// The exit code of the `Result`.
     public var exitCode: Int32 = 0
+    /// Should block the process and wait until exit. Default is false.
+    public var shouldWaitUntilExit: Bool = false
     
     public init() { }
 }

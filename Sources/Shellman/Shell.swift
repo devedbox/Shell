@@ -76,20 +76,22 @@ extension Shell {
         var result = Result()
         
         _process.currentDirectoryPath = path ?? result.currentDirectoryPath
-        if result.stdout != nil {
-            _process.standardOutput = result.stdout
-        }
-        if result.stderr != nil {
-            _process.standardError = result.stderr
-        }
-        if result.stdin != nil {
-            _process.standardInput = result.stdin
-        }
+        
+        _process.standardOutput = result.stdout ?? nil
+        _process.standardError = result.stderr ?? nil
+        _process.standardInput = result.stdin ?? nil
         
         _process.launch()
-        _process.waitUntilExit()
         
-        result.exitCode = _process.terminationStatus
+        if result.shouldWaitUntilExit {
+            _process.waitUntilExit()
+            result.exitCode = _process.terminationStatus
+        } else {
+            _process.terminationHandler = {
+                result.exitCode = $0.terminationStatus
+            }
+        }
+        
         return result
     }
 }

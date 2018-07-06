@@ -30,6 +30,9 @@ public protocol ShellOptionsProvider {
     /// Defaults using `FileManager.default.currentDirectoryPath`.
     var currentDirectoryPath: String { get }
     
+    /// Should block the process and wait until exit.
+    var shouldWaitUntilExit: Bool { get }
+    
     init()
 }
 
@@ -43,6 +46,10 @@ extension ShellOptionsProvider {
     public var stderr: StdErr? { return nil }
     /// Returns the standard input target. Defaults to be nil/
     public var stdin: StdIn? { return nil }
+    /// Should block the process and wait until exit.
+    public var shouldWaitUntilExit: Bool {
+        return true
+    }
 }
 
 // MARK: CurrentDirectoryPath.
