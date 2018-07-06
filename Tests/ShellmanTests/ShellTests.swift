@@ -6,7 +6,9 @@ final class ShellTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        print(("ls -al" as ShellIn).execute().output as Any)
+        let result = ("ls -al" as ShellIn).execute()
+        print(result.output)
+        print(result.exitCode)
         
         Shellman.shellsOut("""
         git clone https://github.com/apple/swift

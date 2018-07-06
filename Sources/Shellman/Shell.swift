@@ -77,9 +77,9 @@ extension Shell {
         
         _process.currentDirectoryPath = path ?? result.currentDirectoryPath
         
-        _process.standardOutput = result.stdout ?? nil
-        _process.standardError = result.stderr ?? nil
-        _process.standardInput = result.stdin ?? nil
+        result.stdout.map { _process.standardOutput = $0 }
+        result.stdin.map { _process.standardInput = $0 }
+        result.stderr.map { _process.standardError = $0 }
         
         _process.launch()
         
