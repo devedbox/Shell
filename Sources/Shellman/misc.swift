@@ -30,7 +30,7 @@ internal var _envPaths: [String] = { () -> [String] in
     #endif
 }()
 /// Find the executable path with a path extension.
-internal func _executable(_ name: String) -> String? {
+internal func executable(_ name: String) -> String? {
     let paths =
         [FileManager.default.currentDirectoryPath] + _envPaths
     return
@@ -41,6 +41,16 @@ internal func _executable(_ name: String) -> String? {
         }).first(where: {
             FileManager.default.isExecutableFile(atPath: $0)
         })
+}
+
+/// Apply the given closure to the given wrapped value when the wrapped value is
+/// not nil and return the closure's executed result.
+internal func apply<T, U>(_ wrapped: U?, with whenNotNil: (U) -> T) -> T? {
+    if let unwrapped = wrapped {
+        return whenNotNil(unwrapped)
+    }
+    
+    return nil
 }
 
 /// Creates a out stream shell with the given commands.

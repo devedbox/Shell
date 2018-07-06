@@ -15,9 +15,9 @@ public final class OutputResult: ShellResultProtocol {
     /// Standard error target type.
     public typealias StdErr = Pipe
     /// Returns the standard output target.
-    public var stdout: StdOut = StdOut()
+    public var stdout: StdOut? = StdOut()
     /// Returns the standard error target.
-    public var stderr: StdErr = StdOut()
+    public var stderr: StdErr? = StdOut()
     /// The exit code of the `Result`.
     public var exitCode: Int32 = 0
     /// Should block the process and wait until exit. Default is false.

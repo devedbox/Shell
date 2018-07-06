@@ -34,7 +34,7 @@ public struct Shell<Result: ShellResultProtocol> {
     /// Creates new instance of `Shell`
     internal init(_ commandsArgs: [String]) {
         var commands = commandsArgs
-        _process.launchPath = _executable(commands.removeFirst())
+        _process.launchPath = executable(commands.removeFirst())
         _process.arguments = commands
     }
 }
@@ -77,9 +77,15 @@ extension Shell {
         
         _process.currentDirectoryPath = path ?? result.currentDirectoryPath
         
-        result.stdout.map { _process.standardOutput = $0 }
-        result.stdin.map { _process.standardInput = $0 }
-        result.stderr.map { _process.standardError = $0 }
+        apply(result.stdout) {
+            _process.standardOutput = $0
+        }
+        apply(result.stdin) {
+            _process.standardInput = $0
+        }
+        apply(result.stderr) {
+            _process.standardError = $0
+        }
         
         _process.launch()
         
