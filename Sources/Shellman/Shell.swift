@@ -28,11 +28,15 @@ public struct Shell<Result: ShellResultProtocol> {
     ///
     /// - Parameter commands: Command string along with arguments of the command.
     /// - Returns: Instance of `Shell` with the given command and args.
-    public init(_ commands: String) {
+    public init(
+        _ commands: String)
+    {
         self.init(commands.split(separator: " ").map { String($0) })
     }
     /// Creates new instance of `Shell`
-    internal init(_ commandsArgs: [String]) {
+    internal init(
+        _ commandsArgs: [String])
+    {
         var commands = commandsArgs
         _process.launchPath = executable(commands.removeFirst())
         _process.arguments = commands
