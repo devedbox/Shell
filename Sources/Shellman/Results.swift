@@ -7,9 +7,9 @@
 
 import Foundation
 
-// MARK: - OutputResult.
+// MARK: - RerirectResult.
 
-public final class OutputResult: ShellResultProtocol {
+public final class RerirectResult: ShellResultProtocol {
     /// Standard output target type.
     public typealias StdOut = Pipe
     /// Standard error target type.
@@ -26,9 +26,9 @@ public final class OutputResult: ShellResultProtocol {
     public init() { }
 }
 
-// MARK: - Result.
+// MARK: - DirectResult.
 
-public struct Result: ShellResultProtocol {
+public struct DirectResult: ShellResultProtocol {
     /// The exit code of the `Result`.
     public var exitCode: Int32 = 0
     
