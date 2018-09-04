@@ -6,12 +6,12 @@
 
 import Foundation
 
-/// Shell associating `Result` to execute command at subprocess and using the default
+/// Shell associating `DirectResult` to execute command at subprocess and using the default
 /// stdout, stdin, stderr of that process.
-public typealias ShellOut = Shell<Result>
-/// Shell associating `OutputResult` to execute command at subprocess and using the custom
+public typealias ShellOut = Shell<DirectResult>
+/// Shell associating `RedirectResult` to execute command at subprocess and using the custom
 /// stdout, stdin, stderr to gain outputs of that process.
-public typealias ShellIn = Shell<OutputResult>
+public typealias ShellIn = Shell<RedirectResult>
 
 // MARK: - Shell.
 
