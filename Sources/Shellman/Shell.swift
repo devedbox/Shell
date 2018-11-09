@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import Utility
 
 /// Shell associating `DirectResult` to execute command at subprocess and using the default
 /// stdout, stdin, stderr of that process.
@@ -31,29 +32,10 @@ public struct Shell<Result: ShellResultProtocol> {
   public init(
     _ commands: String)
   {
-    var commands = commands
-    var args: [String] = []
-    var ignores: [NSRange] = []
-    let scanner = Scanner(string: commands)
-    var range = NSRange(location: NSNotFound, length: NSNotFound)
+    var commandLine = Utility.CommandLine()
+    commandLine.parse(commands)
     
-    while !scanner.isAtEnd { if scanner.scanString("\"", into: nil) {
-      if range.location == NSNotFound {
-        range.location = scanner.scanLocation - 1
-      } else if range.length == NSNotFound {
-        range.length = scanner.scanLocation - range.location
-        args.append((commands as NSString).substring(with: range))
-        ignores.append(range)
-        range = NSRange(location: NSNotFound, length: NSNotFound)
-      } }
-      if !scanner.isAtEnd { scanner.scanLocation += 1 }
-    }
-    
-    ignores.reversed().forEach {
-      commands = (commands as NSString).replacingCharacters(in: $0, with: " ")
-    }
-    
-    self.init(commands.split(separator: " ").map { String($0) } + args)
+    self.init(commandLine.arguments)
   }
   /// Creates new instance of `Shell`
   internal init(

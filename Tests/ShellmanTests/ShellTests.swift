@@ -11,38 +11,12 @@ final class ShellTests: XCTestCase {
         print(result.exitCode)
         
         Shellman.shellsOut("""
-        git clone https://github.com/apple/swift
-        cd ./swift
+        git clone https://github.com/devedbox/Commander.git
+        cd ./Commander
         swift build -c release
         cd ../
-        rm -rf ./swift
+        rm -rf ./Commander
         """)
-    }
-    
-    func testScanner() {
-        let commands = """
-         git commit -m "feat: Updates HAHAHA."
-         """
-        let shell = ShellOut(commands)
-        XCTAssertEqual(
-            Set(["commit", "-m", "\"feat: Updates HAHAHA.\""]),
-            Set(shell.arguments)
-        )
-        
-        XCTAssertEqual(
-            Set(["commit", "-m", "\"haha\""]),
-            Set(ShellOut("git commit -m \"haha\"").arguments)
-        )
-        
-        XCTAssertEqual(
-            Set(["commit", "-m", "\"haha\"", "\""]),
-            Set(ShellOut("git commit -m\"haha\"\"").arguments)
-        )
-        
-        XCTAssertEqual(
-            Set(["commit", "-m", "\"haha\"", "\"\""]),
-            Set(ShellOut("git commit -m\"haha\"\"\"").arguments)
-        )
     }
 
     static var allTests = [
