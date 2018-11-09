@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Commander",
+        "repositoryURL": "https://github.com/devedbox/Commander.git",
+        "state": {
+          "branch": null,
+          "revision": "a992248580e5e6e528bea5b4035517993875c5e8",
+          "version": "0.4.9"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

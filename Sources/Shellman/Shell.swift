@@ -18,112 +18,112 @@ public typealias ShellIn = Shell<RerirectResult>
 /// A type represents the command line process on shell. Using this type instead of process directly to
 /// execute commands with specific `ShellResultProtocol`.
 public struct Shell<Result: ShellResultProtocol> {
-    /// The underlying process instance of the `Shell`.
-    private let _process = Process()
-    /// Creates an instance of `Shell` with the commands string literal. Using white space to separate
-    /// diffrent part of the commands like this:
-    /// ```
-    /// {command} {arg0} {arg1} ...{argn}
-    /// ```
-    ///
-    /// - Parameter commands: Command string along with arguments of the command.
-    /// - Returns: Instance of `Shell` with the given command and args.
-    public init(
-        _ commands: String)
-    {
-        var commands = commands
-        var args: [String] = []
-        var ignores: [NSRange] = []
-        let scanner = Scanner(string: commands)
-        var range = NSRange(location: NSNotFound, length: NSNotFound)
-        
-        while !scanner.isAtEnd { if scanner.scanString("\"", into: nil) {
-            if range.location == NSNotFound {
-                range.location = scanner.scanLocation - 1
-            } else if range.length == NSNotFound {
-                range.length = scanner.scanLocation - range.location
-                args.append((commands as NSString).substring(with: range))
-                ignores.append(range)
-                range = NSRange(location: NSNotFound, length: NSNotFound)
-            } }
-            if !scanner.isAtEnd { scanner.scanLocation += 1 }
-        }
-        
-        ignores.reversed().forEach {
-            commands = (commands as NSString).replacingCharacters(in: $0, with: " ")
-        }
-        
-        self.init(commands.split(separator: " ").map { String($0) } + args)
+  /// The underlying process instance of the `Shell`.
+  private let _process = Process()
+  /// Creates an instance of `Shell` with the commands string literal. Using white space to separate
+  /// diffrent part of the commands like this:
+  /// ```
+  /// {command} {arg0} {arg1} ...{argn}
+  /// ```
+  ///
+  /// - Parameter commands: Command string along with arguments of the command.
+  /// - Returns: Instance of `Shell` with the given command and args.
+  public init(
+    _ commands: String)
+  {
+    var commands = commands
+    var args: [String] = []
+    var ignores: [NSRange] = []
+    let scanner = Scanner(string: commands)
+    var range = NSRange(location: NSNotFound, length: NSNotFound)
+    
+    while !scanner.isAtEnd { if scanner.scanString("\"", into: nil) {
+      if range.location == NSNotFound {
+        range.location = scanner.scanLocation - 1
+      } else if range.length == NSNotFound {
+        range.length = scanner.scanLocation - range.location
+        args.append((commands as NSString).substring(with: range))
+        ignores.append(range)
+        range = NSRange(location: NSNotFound, length: NSNotFound)
+      } }
+      if !scanner.isAtEnd { scanner.scanLocation += 1 }
     }
-    /// Creates new instance of `Shell`
-    internal init(
-        _ commandsArgs: [String])
-    {
-        var commands = commandsArgs
-        _process.launchPath = executable(commands.removeFirst())
-        _process.arguments = commands
+    
+    ignores.reversed().forEach {
+      commands = (commands as NSString).replacingCharacters(in: $0, with: " ")
     }
+    
+    self.init(commands.split(separator: " ").map { String($0) } + args)
+  }
+  /// Creates new instance of `Shell`
+  internal init(
+    _ commandsArgs: [String])
+  {
+    var commands = commandsArgs
+    _process.launchPath = executable(commands.removeFirst())
+    _process.arguments = commands
+  }
 }
 
 // MARK: - ExpressibleByStringLiteral.
 
 extension Shell: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    
-    public init(stringLiteral commands: String) {
-        self.init(commands)
-    }
+  public typealias StringLiteralType = String
+  
+  public init(stringLiteral commands: String) {
+    self.init(commands)
+  }
 }
 
 // MARK: -
 
 extension Shell {
-    public static func shells(_ multilines: String) -> [Shell<Result>] {
-        return (multilines as NSString).components(separatedBy: .newlines).map { Shell<Result>($0) }
-    }
+  public static func shells(_ multilines: String) -> [Shell<Result>] {
+    return (multilines as NSString).components(separatedBy: .newlines).map { Shell<Result>($0) }
+  }
 }
 
 // MARK: - Public.
 
 extension Shell {
-    public var command: String? {
-        guard let cmd = _process.launchPath?.split(separator: "/").last else {
-            return nil
-        }
-        return String(cmd)
+  public var command: String? {
+    guard let cmd = _process.launchPath?.split(separator: "/").last else {
+      return nil
+    }
+    return String(cmd)
+  }
+  
+  public var arguments: [String] {
+    return _process.arguments ?? []
+  }
+  
+  @discardableResult
+  public func execute(at path: String? = nil) -> Result {
+    var result = Result()
+    
+    _process.currentDirectoryPath = path ?? result.currentDirectoryPath
+    
+    apply(result.stdout) {
+      _process.standardOutput = $0
+    }
+    apply(result.stdin) {
+      _process.standardInput = $0
+    }
+    apply(result.stderr) {
+      _process.standardError = $0
     }
     
-    public var arguments: [String] {
-        return _process.arguments ?? []
+    _process.launch()
+    
+    if result.shouldWaitUntilExit {
+      _process.waitUntilExit()
+      result.exitCode = _process.terminationStatus
+    } else {
+      _process.terminationHandler = {
+        result.exitCode = $0.terminationStatus
+      }
     }
     
-    @discardableResult
-    public func execute(at path: String? = nil) -> Result {
-        var result = Result()
-        
-        _process.currentDirectoryPath = path ?? result.currentDirectoryPath
-        
-        apply(result.stdout) {
-            _process.standardOutput = $0
-        }
-        apply(result.stdin) {
-            _process.standardInput = $0
-        }
-        apply(result.stderr) {
-            _process.standardError = $0
-        }
-        
-        _process.launch()
-        
-        if result.shouldWaitUntilExit {
-            _process.waitUntilExit()
-            result.exitCode = _process.terminationStatus
-        } else {
-            _process.terminationHandler = {
-                result.exitCode = $0.terminationStatus
-            }
-        }
-        
-        return result
-    }
+    return result
+  }
 }
