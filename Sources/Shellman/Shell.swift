@@ -32,10 +32,7 @@ public struct Shell<Result: ShellResultProtocol> {
   public init(
     _ commands: String)
   {
-    var commandLine = Utility.CommandLine()
-    commandLine.parse(commands)
-    
-    self.init(commandLine.arguments)
+    self.init(Utility.CommandLine(commands).arguments)
   }
   /// Creates new instance of `Shell`
   internal init(
