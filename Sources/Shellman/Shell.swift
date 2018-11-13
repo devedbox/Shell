@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import Utility
 
 /// Shell associating `DirectResult` to execute command at subprocess and using the default
 /// stdout, stdin, stderr of that process.
@@ -13,6 +12,49 @@ public typealias ShellOut = Shell<DirectResult>
 /// Shell associating `RerirectResult` to execute command at subprocess and using the custom
 /// stdout, stdin, stderr to gain outputs of that process.
 public typealias ShellIn = Shell<RerirectResult>
+
+// MARK: - CommandLine.
+
+/// A type that parses the command line arguments.
+public struct CommandLine {
+  /// The count of the arguments excluding the command path.
+  public var argc: Int32 {
+    return Int32(arguments.underestimatedCount) - 1
+  }
+  /// The parsed arguments.
+  public private(set) var arguments: [String] = []
+  /// Parse the given command line string and creates an instance of 'CommandLine'.
+  ///
+  /// - Parameter commandLine: The command line raw string value.
+  public init(_ commandLine: String) {
+    var isEscaping: Bool = false
+    var isQuoting: Bool = false
+    var iterator = commandLine.makeIterator()
+    
+    while let char = iterator.next() {
+      switch char {
+      case "\\" where !isEscaping: isEscaping = true
+      case "\"" where !isEscaping: fallthrough
+      case "'"  where !isEscaping: isQuoting.toggle()
+      case " "  where !isEscaping:
+        if isQuoting { fallthrough }
+        if let last = arguments.last, last.isEmpty {
+          break
+        }
+        
+        arguments.append(String())
+      default:
+        isEscaping ? isEscaping.toggle() : ()
+        arguments.isEmpty ? arguments.append(String()) : ()
+        arguments.append(arguments.popLast()! + String(char))
+      }
+    }
+    
+    if let last = arguments.last, last.isEmpty {
+      arguments.removeLast()
+    }
+  }
+}
 
 // MARK: - Shell.
 
@@ -32,7 +74,7 @@ public struct Shell<Result: ShellResultProtocol> {
   public init(
     _ commands: String)
   {
-    self.init(Utility.CommandLine(commands).arguments)
+    self.init(CommandLine(commands).arguments)
   }
   /// Creates new instance of `Shell`
   internal init(
